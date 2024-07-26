@@ -11,15 +11,15 @@ import app.utils.IDGenerator;
 
 public class UserManager {
 
-    public boolean registerUser(String username, String password, User.Role role) {
+    public boolean registerUser(String username, String password, String role) {
+        String query = "INSERT INTO Users (ID, Username, Password, Role) VALUES (?, ?, ?, ?)";
         String userID = IDGenerator.generateUserID();
-        try (Connection conn = DatabaseManager.connect();
-             PreparedStatement stmt = conn.prepareStatement("INSERT INTO users (userID, username, password, role) VALUES (?, ?, ?, ?)")) {
-            stmt.setString(1, userID);
-            stmt.setString(2, username);
-            stmt.setString(3, password);
-            stmt.setString(4, role.name());
-            int rowsAffected = stmt.executeUpdate();
+        try (Connection conn = DatabaseManager.connect(); PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setString(1, userID);
+            pstmt.setString(2, username);
+            pstmt.setString(3, password);
+            pstmt.setString(4, role);
+            int rowsAffected = pstmt.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
             e.printStackTrace();

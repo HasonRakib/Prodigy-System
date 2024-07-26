@@ -22,7 +22,7 @@ public class DatabaseManager {
     // Initialize database with necessary tables
     public static void initialize() {
         String userTable = "CREATE TABLE IF NOT EXISTS Users (" +
-                "ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "ID TEXT PRIMARY KEY, " +
                 "Username TEXT NOT NULL UNIQUE, " +
                 "Password TEXT NOT NULL, " +
                 "Role TEXT NOT NULL" +
