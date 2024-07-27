@@ -22,7 +22,9 @@ public class DatabaseManager {
     // Initialize database with necessary tables
     public static void initialize() {
         String userTable = "CREATE TABLE IF NOT EXISTS Users (" +
-                "ID TEXT PRIMARY KEY, " +
+                //"userID TEXT NOT NULL, " +
+                //"ID TEXT PRIMARY KEY, " +
+                "userID TEXT PRIMARY KEY," +
                 "Username TEXT NOT NULL UNIQUE, " +
                 "Password TEXT NOT NULL, " +
                 "Role TEXT NOT NULL" +
@@ -86,11 +88,11 @@ public class DatabaseManager {
                 "EndDate DATE" +
                 ");";
 
-        String createUsersTable = "CREATE TABLE IF NOT EXISTS users (" +
+        /*String createUsersTable = "CREATE TABLE IF NOT EXISTS users (" +
                 "userID TEXT PRIMARY KEY," +
                 "username TEXT NOT NULL," +
                 "password TEXT NOT NULL," +
-                "role TEXT NOT NULL)";
+                "role TEXT NOT NULL)";*/
 
         try (Connection conn = connect(); Statement stmt = conn.createStatement()) {
             stmt.execute(userTable);
@@ -100,7 +102,7 @@ public class DatabaseManager {
             stmt.execute(fileTable);
             stmt.execute(notificationTable);
             stmt.execute(projectTable);
-            stmt.execute(createUsersTable);
+            //stmt.execute(createUsersTable);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }

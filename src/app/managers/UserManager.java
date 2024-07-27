@@ -11,14 +11,37 @@ import app.utils.IDGenerator;
 
 public class UserManager {
 
+    private String generateUniqueUserID(String role) {
+        String userID;
+        boolean isUnique;
+        do {
+            userID = IDGenerator.generateUserID(role);
+            isUnique = checkUniqueUserID(userID);
+        } while (!isUnique);
+        return userID;
+    }
+
+    private boolean checkUniqueUserID(String userID) {
+        String query = "SELECT 1 FROM Users WHERE userID = ?";
+        try (Connection conn = DatabaseManager.connect(); PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setString(1, userID);
+            ResultSet rs = pstmt.executeQuery();
+            return !rs.next();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+
     public boolean registerUser(String username, String password, String role) {
-        String query = "INSERT INTO Users (ID, Username, Password, Role) VALUES (?, ?, ?, ?)";
-        String userID = IDGenerator.generateUserID();
+        String query = "INSERT INTO Users (userID, Username, Password, Role) VALUES (?, ?, ?, ?)";
+        String userID = generateUniqueUserID(role);
         try (Connection conn = DatabaseManager.connect(); PreparedStatement pstmt = conn.prepareStatement(query)) {
             pstmt.setString(1, userID);
             pstmt.setString(2, username);
             pstmt.setString(3, password);
-            pstmt.setString(4, role);
+            pstmt.setString(4, role.toUpperCase().replace(" ", "_")); // Store role in uppercase, replace the space with an underscore
             int rowsAffected = pstmt.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
@@ -35,8 +58,9 @@ public class UserManager {
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 String userID = rs.getString("userID");
-                String role = rs.getString("role");
-                return new User(userID, username, password, User.Role.valueOf(role));
+                String roleStr = rs.getString("Role").toUpperCase().replace(" ", "_");  // Replace spaces with underscores
+                User.Role role = User.Role.valueOf(roleStr);  // Convert string to enum
+                return new User(userID, username, password, role);
             } else {
                 return null;
             }
