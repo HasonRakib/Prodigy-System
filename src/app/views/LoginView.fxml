@@ -24,7 +24,6 @@
             <rowConstraints>
                 <RowConstraints valignment="CENTER" />
                 <RowConstraints valignment="CENTER" />
-                
             </rowConstraints>
             <children>
                 <Label text="Username:" GridPane.rowIndex="0" GridPane.columnIndex="0" />

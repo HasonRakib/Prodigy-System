@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.controllers.ProjectManagerDashboardController">
+    <Label fx:id="dashboardLabel" text="Project Manager Dashboard"/>
+    <!-- Add more UI elements here as needed -->
+</VBox>
