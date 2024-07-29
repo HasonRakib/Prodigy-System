@@ -1,22 +1,100 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.PasswordField?>
 
+<TabPane xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.controllers.ProjectManagerDashboardController">
 
-<VBox xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.controllers.ProjectManagerDashboardController">
-    <Label fx:id="dashboardLabel" text="Project Manager Dashboard"/>
-    <!-- Add more UI elements here as needed -->
+    <!-- Tab for adding an employee -->
+    <Tab text="Add Employee">
+        <VBox>
+            <Label text="Add Employee"/>
+            <TextField fx:id="employeeUsernameField" promptText="Username"/>
+            <PasswordField fx:id="employeePasswordField" promptText="Password"/>
+            <Button text="Add" onAction="#handleAddEmployee"/>
+        </VBox>
+    </Tab>
 
-     <!-- Add Employee Section -->
-     <VBox spacing="10">
-        <Label text="Add Employee"/>
-        <TextField fx:id="employeeNameField" promptText="Employee Name"/>
-        <TextField fx:id="employeeIDField" promptText="Employee ID"/>
-        <Button text="Add Employee"/>
-    </VBox>
+    <!-- Tab for viewing all employees -->
+    <Tab text="View Employees">
+        <VBox>
+            <Label text="All Employees"/>
+            <ListView fx:id="employeeListView"/>
+            <Button text="View All Employees" onAction="#handleViewAllEmployees"/>
+        </VBox>
+    </Tab>
 
-</VBox>
+    <!-- Tab for breaking down tasks and assigning subtasks -->
+    <Tab text="Assign Subtasks">
+        <VBox>
+            <Label text="Assign Subtasks"/>
+            <TextField fx:id="taskIdField" promptText="Task ID"/>
+            <TextField fx:id="employeeIdField" promptText="Employee ID"/>
+            <TextField fx:id="subtaskTitleField" promptText="Subtask Title"/>
+            <TextArea fx:id="subtaskDescriptionField" promptText="Subtask Description"/>
+            <Button text="Assign" onAction="#handleAssignSubtask"/>
+        </VBox>
+    </Tab>
+
+    <!-- Tab for viewing all assigned tasks -->
+    <Tab text="View Tasks">
+        <VBox>
+            <Label text="All Tasks"/>
+            <ListView fx:id="taskListView"/>
+            <Button text="View All Tasks" onAction="#handleViewAllTasks"/>
+        </VBox>
+    </Tab>
+
+    <!-- Tab for adding files to tasks -->
+    <Tab text="Manage Files">
+        <VBox>
+            <Label text="Manage Files"/>
+            <TextField fx:id="fileTaskIdField" promptText="Task ID"/>
+            <Button text="Upload File" onAction="#handleUploadFile"/>
+            <Button text="Download File" onAction="#handleDownloadFile"/>
+        </VBox>
+    </Tab>
+
+    <!-- Tab for updating task status -->
+    <Tab text="Update Task Status">
+        <VBox>
+            <Label text="Update Task Status"/>
+            <TextField fx:id="updateTaskIdField" promptText="Task ID"/>
+            <TextField fx:id="taskStatusField" promptText="New Status"/>
+            <Button text="Update" onAction="#handleUpdateTaskStatus"/>
+        </VBox>
+    </Tab>
+
+    <!-- Tab for deleting an employee -->
+    <Tab text="Delete Employee">
+        <VBox>
+            <Label text="Delete Employee"/>
+            <TextField fx:id="deleteEmployeeUsernameField" promptText="Employee Username"/>
+            <Button text="Delete" onAction="#handleDeleteEmployee"/>
+        </VBox>
+    </Tab>
+
+    <!-- Tab for deleting a task -->
+    <Tab text="Delete Task">
+        <VBox>
+            <Label text="Delete Task"/>
+            <TextField fx:id="deleteTaskIdField" promptText="Task ID"/>
+            <Button text="Delete" onAction="#handleDeleteTask"/>
+        </VBox>
+    </Tab>
+
+    <!-- Logout button -->
+    <Tab text="Logout">
+        <VBox>
+            <Button text="Logout" onAction="#handleLogout"/>
+        </VBox>
+    </Tab>
+
+</TabPane>
