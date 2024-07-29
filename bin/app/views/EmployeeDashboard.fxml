@@ -1,10 +1,62 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.collections.FXCollections?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.TextArea?>
 
 <VBox xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.controllers.EmployeeDashboardController">
-    <Label fx:id="dashboardLabel" text="Admin Dashboard"/>
-    <!-- Add more UI elements here as needed -->
+    <Label text="Employee Dashboard" style="-fx-font-size: 24px;"/>
+
+    <TabPane>
+        <!-- Messaging Tab -->
+        <Tab text="Messaging">
+            <VBox>
+                <Label text="Messages"/>
+                <ListView fx:id="messageListView"/>
+                <TextField fx:id="messageField" promptText="Type your message"/>
+                <Button text="Send" onAction="#handleSendMessage"/>
+            </VBox>
+        </Tab>
+
+        <!-- View Tasks Tab -->
+        <Tab text="View Tasks">
+            <VBox>
+                <Label text="Tasks Assigned to You"/>
+                <ListView fx:id="taskListView"/>
+            </VBox>
+        </Tab>
+
+        <!-- Update Task Status Tab -->
+        <Tab text="Update Task Status">
+            <VBox>
+                <Label text="Update Task Status"/>
+                <TextField fx:id="taskIdField" promptText="Task ID"/>
+                <ComboBox fx:id="statusComboBox" promptText="Select Status"/>
+                <Button text="Update Status" onAction="#handleUpdateTaskStatus"/>
+            </VBox>
+        </Tab>
+
+        <!-- Send Email Tab -->
+        <Tab text="Send Email">
+            <VBox>
+                <Label text="Send Email"/>
+                <TextField fx:id="emailRecipientField" promptText="Recipient Email"/>
+                <TextField fx:id="emailSubjectField" promptText="Subject"/>
+                <TextArea fx:id="emailBodyField" promptText="Message"/>
+                <Button text="Send Email"/>
+            </VBox>
+        </Tab>
+    </TabPane>
+
+    <Button text="Logout" onAction="#handleLogout" style="-fx-background-color: #ff4d4d; -fx-text-fill: white;"/>
 </VBox>
