@@ -69,4 +69,21 @@ public class UserManager {
             return null;
         }
     }
+
+    public boolean deleteUser(String username) {
+        String query = "DELETE FROM Users WHERE Username = ?";
+
+        try (Connection conn = DatabaseManager.connect();
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+
+            pstmt.setString(1, username);
+
+            pstmt.executeUpdate();
+            return true;
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            return false;
+        }
+    }
 }

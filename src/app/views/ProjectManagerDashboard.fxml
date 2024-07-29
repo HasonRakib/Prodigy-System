@@ -3,8 +3,20 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Button?>
+
 
 <VBox xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.controllers.ProjectManagerDashboardController">
     <Label fx:id="dashboardLabel" text="Project Manager Dashboard"/>
     <!-- Add more UI elements here as needed -->
+
+     <!-- Add Employee Section -->
+     <VBox spacing="10">
+        <Label text="Add Employee"/>
+        <TextField fx:id="employeeNameField" promptText="Employee Name"/>
+        <TextField fx:id="employeeIDField" promptText="Employee ID"/>
+        <Button text="Add Employee"/>
+    </VBox>
+
 </VBox>

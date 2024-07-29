@@ -8,6 +8,7 @@ public class IDGenerator {
     private static final AtomicInteger empCounter = new AtomicInteger(100);
     private static final AtomicInteger taskCounter = new AtomicInteger(100);
     private static final AtomicInteger messageCounter = new AtomicInteger(100);
+    private static final AtomicInteger projectCounter = new AtomicInteger(500);
 
 
 
@@ -24,6 +25,11 @@ public class IDGenerator {
         }
     }
 
+
+    public static String generateProjectID() {
+        return "PROJ" + projectCounter.getAndIncrement();
+    }
+    
     public static String generateTaskID() {
         return "TASK" + taskCounter.getAndIncrement();
     }

@@ -1,10 +1,83 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.Tab?>
+
 
 <VBox xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.controllers.AdminDashboardController">
-    <Label fx:id="dashboardLabel" text="Admin Dashboard"/>
-    <!-- Add more UI elements here as needed -->
+    <Label text="Admin Dashboard" style="-fx-font-size: 24px;"/>
+
+    <TabPane>
+        <Tab text="Add Project Manager">
+            <VBox>
+                <Label text="Add Project Manager"/>
+                <TextField fx:id="pmUsernameField" promptText="Username"/>
+                <PasswordField fx:id="pmPasswordField" promptText="Password"/>
+                <Button text="Add" onAction="#handleAddProjectManager"/>
+            </VBox>
+        </Tab>
+
+        <Tab text="Create Project">
+            <VBox>
+                <Label text="Create Project"/>
+                <TextField fx:id="projectTitleField" promptText="Title"/>
+                <TextArea fx:id="projectDescriptionField" promptText="Description"/>
+                <DatePicker fx:id="projectStartDatePicker" promptText="Start Date"/>
+                <DatePicker fx:id="projectEndDatePicker" promptText="End Date"/>
+                <Button text="Create" onAction="#handleCreateProject"/>
+            </VBox>
+        </Tab>
+
+        <Tab text="Create Task">
+            <VBox>
+                <Label text="Create Task"/>
+                <TextField fx:id="taskTitleField" promptText="Title"/>
+                <TextArea fx:id="taskDescriptionField" promptText="Description"/>
+                <Button text="Create" onAction="#handleCreateTask"/>
+            </VBox>
+        </Tab>
+
+        <Tab text="Assign Task">
+            <VBox>
+                <Label text="Assign Task"/>
+                <TextField fx:id="taskIdField" promptText="Task ID"/>
+                <TextField fx:id="pmIdField" promptText="Project Manager ID"/>
+                <Button text="Assign" onAction="#handleAssignTask"/>
+            </VBox>
+        </Tab>
+
+        <Tab text="View All Users">
+            <VBox>
+                <Label text="All Users"/>
+                <ListView fx:id="userListView"/>
+                <Button text="View All Users" onAction="#handleViewAllUsers"/>
+                <Button text="Delete Project Manager" onAction="#handleDeleteProjectManager"/>
+            </VBox>
+        </Tab>
+
+        <Tab text="View All Tasks">
+            <VBox>
+                <Label text="All Tasks"/>
+                <ListView fx:id="taskListView"/>
+                <Button text="View All Tasks" onAction="#handleViewAllTasks"/>
+                <Button text="Delete Task" onAction="#handleDeleteTask"/>
+            </VBox>
+        </Tab>
+
+        <Tab text="Logout">
+            <VBox>
+                <Button text="Logout" onAction="#handleLogout" style="-fx-background-color: #ff4d4d; -fx-text-fill: white;"/>
+            </VBox>
+        </Tab>
+    </TabPane>
 </VBox>
