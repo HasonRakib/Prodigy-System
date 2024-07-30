@@ -1,11 +1,15 @@
 package app;
 
+//import java.io.FileInputStream;
+//import java.io.InputStream;
+
 import app.utils.DatabaseManager;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+//import javafx.scene.image.Image;
 
 public class Main extends Application {
 
@@ -17,14 +21,25 @@ public class Main extends Application {
             DatabaseManager.initialize();
             System.out.println("Database initialized successfully.");
 
-            // Load the login view
-            System.out.println("Loading LoginView.fxml...");
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/app/views/LoginView.fxml"));
+            // Load the welcome view
+            System.out.println("Loading WelcomeView.fxml...");
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/app/views/EmployeeDashboard.fxml"));
             Parent root = loader.load();
-            System.out.println("LoginView.fxml loaded successfully.");
+            System.out.println("WelcomeView.fxml loaded successfully.");
+            
+            primaryStage.setTitle("PRODIGY SYSTEM");
 
-            primaryStage.setTitle("Prodigy");
-            primaryStage.setScene(new Scene(root, 400, 300));
+            // Load and set multiple icons
+            /*try (InputStream iconStream1 = new FileInputStream("/icons/webp.net-resizeimage.png");
+                 InputStream iconStream2 = new FileInputStream("/icons/webp.net-resizeimage(1).png")) {
+
+                primaryStage.getIcons().addAll(
+                    new Image(iconStream1),
+                    new Image(iconStream2)
+                );
+            }*/
+
+            primaryStage.setScene(new Scene(root, 600, 600));
             primaryStage.show();
             System.out.println("Stage shown successfully.");
 

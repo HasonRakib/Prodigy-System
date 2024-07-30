@@ -4,24 +4,29 @@ import app.models.User;
 
 import java.net.URL;
 
+
 import app.managers.UserManager;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
-//import javafx.scene.Parent;
+
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-//import java.io.IOException;
+import javafx.scene.control.Button;
 
 public class LoginController {
+
+    @FXML
+    private VBox rootPane;
 
     @FXML
     private TextField usernameField;
@@ -30,12 +35,25 @@ public class LoginController {
     @FXML
     private ComboBox<String> roleComboBox;
 
+    @FXML
+    private Button loginButton;
+
+    @FXML
+    private Button registerButton;
+
+    @FXML
+    private Button backButton;
+
     private UserManager userManager = new UserManager();
+
+    
 
     @FXML
     private void initialize() {
         roleComboBox.setItems(FXCollections.observableArrayList("Admin", "Project Manager", "Employee"));
     }
+
+    
 
     @FXML
     private void handleLogin(ActionEvent event) {
@@ -109,12 +127,30 @@ public class LoginController {
             FXMLLoader loader = new FXMLLoader(fxmlLocation);
             Parent root = loader.load();
             
-            Scene scene = new Scene(root);
+            Scene scene = new Scene(root, 600,600);
             stage.setScene(scene);
             stage.show();
         } catch (Exception e) {
             e.printStackTrace();
             showAlert(AlertType.ERROR, "Error", "Failed to load the dashboard.");
+        }
+    }
+
+    @FXML
+    private void handleBack(ActionEvent event) {
+        try {
+            // Navigate back to the welcome screen
+            Stage stage = (Stage) backButton.getScene().getWindow();
+            stage.close(); // Close the current stage
+
+            Stage welcomeStage = new Stage();
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/app/views/WelcomeView.fxml"));
+            Parent root = loader.load();
+            welcomeStage.setTitle("Welcome");
+            welcomeStage.setScene(new Scene(root, 600, 600));
+            welcomeStage.show();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }
