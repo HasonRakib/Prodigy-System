@@ -20,6 +20,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
+//import java.util.Optional;
 import java.util.Optional;
 
 public class AdminDashboardController {
@@ -80,7 +81,7 @@ public class AdminDashboardController {
     }
 
     private boolean addProjectToDatabase(String projectID, String title, String description, LocalDate startDate, LocalDate endDate) {
-        String query = "INSERT INTO Projects (ID, Title, Description, StartDate, EndDate) VALUES (?, ?, ?, ?, ?)";
+        String query = "INSERT INTO Projects (projectID, Title, Description, StartDate, EndDate) VALUES (?, ?, ?, ?, ?)";
 
         try (Connection conn = DatabaseManager.connect();
              PreparedStatement pstmt = conn.prepareStatement(query)) {
@@ -103,36 +104,30 @@ public class AdminDashboardController {
    
     @FXML
     private void handleAddProjectManager() {
-        TextInputDialog usernameDialog = new TextInputDialog();
-        usernameDialog.setTitle("Add Project Manager");
-        usernameDialog.setHeaderText("Enter Project Manager Username");
-        usernameDialog.setContentText("Username:");
+        String username = pmUsernameField.getText();
+        String password = pmPasswordField.getText();
 
-        Optional<String> usernameResult = usernameDialog.showAndWait();
-        if (!usernameResult.isPresent()) {
+        if (username.isEmpty() || password.isEmpty()) {
+            showAlert("Error", "Username or password cannot be empty.");
             return;
         }
-        String username = usernameResult.get();
+        
 
-        TextInputDialog passwordDialog = new TextInputDialog();
-        passwordDialog.setTitle("Add Project Manager");
-        passwordDialog.setHeaderText("Enter Project Manager Password");
-        passwordDialog.setContentText("Password:");
-
-        Optional<String> passwordResult = passwordDialog.showAndWait();
-        if (!passwordResult.isPresent()) {
-            return;
-        }
-        String password = passwordResult.get();
-
-        String role = "PROJECT_MANAGER";
-        boolean registered = userManager.registerUser(username, password, role);
-        if (registered) {
-            showAlert(Alert.AlertType.INFORMATION, "Registration Successful", "Project Manager added successfully.");
+        boolean success = UserManager.addProjectManager(username, password);
+        if (success) {
+            showAlert("Success", "Project Manager added successfully.");
         } else {
-            showAlert(Alert.AlertType.ERROR, "Registration Failed", "Failed to add Project Manager.");
+            showAlert("Error", "Failed to add Project Manager.");
         }
     }
+
+    private void showAlert(String title, String message) {
+        Alert alert = new Alert(AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+    
 
     @FXML
     private void handleViewAllUsers(ActionEvent event) {
@@ -172,25 +167,62 @@ public class AdminDashboardController {
 
     @FXML
     private void handleDeleteProjectManager(ActionEvent event) {
-        String username = deletePMUsernameField.getText();
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("Delete Project Manager");
+        dialog.setHeaderText("Enter the username of the Project Manager to delete:");
+        dialog.setContentText("Username:");
+
+        Optional<String> result = dialog.showAndWait();
+        result.ifPresent(username -> {
+        //String username = deletePMUsernameField.getText();
 
         if (userManager.deleteUser(username)) {
             showAlert(AlertType.INFORMATION, "Success", "Project Manager deleted successfully.");
             loadUsers();
         } else {
             showAlert(AlertType.ERROR, "Error", "Failed to delete Project Manager.");
-        }
+            }
+        });
     }
 
     @FXML
     private void handleDeleteTask(ActionEvent event) {
-        String taskID = taskIdField.getText();
+         // Create a TextInputDialog for entering the taskID
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("Delete Task");
+        dialog.setHeaderText("Enter the Task ID to delete:");
+        dialog.setContentText("Task ID:");
 
+        //String taskID = taskIdField.getText();
+          // Show the dialog and wait for user input
+        Optional<String> result = dialog.showAndWait();
+        result.ifPresent(taskID -> {
+         // If a taskID is provided, attempt to delete the Task
         if (deleteTaskFromDatabase(taskID)) {
             showAlert(AlertType.INFORMATION, "Success", "Task deleted successfully.");
             loadTasks();
         } else {
             showAlert(AlertType.ERROR, "Error", "Failed to delete task.");
+            }
+        });
+    }
+
+
+
+    private boolean deleteTaskFromDatabase(String taskID) {
+        String query = "DELETE FROM Tasks WHERE ID = ?";
+
+        try (Connection conn = DatabaseManager.connect();
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+
+            pstmt.setString(1, taskID);
+
+            pstmt.executeUpdate();
+            return true;
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            return false;
         }
     }
 
@@ -284,22 +316,7 @@ public class AdminDashboardController {
         }
     }
 
-    private boolean deleteTaskFromDatabase(String taskID) {
-        String query = "DELETE FROM Tasks WHERE ID = ?";
-
-        try (Connection conn = DatabaseManager.connect();
-             PreparedStatement pstmt = conn.prepareStatement(query)) {
-
-            pstmt.setString(1, taskID);
-
-            pstmt.executeUpdate();
-            return true;
-
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-            return false;
-        }
-    }
+   
 
     private void showAlert(AlertType alertType, String title, String message) {
         Alert alert = new Alert(alertType);

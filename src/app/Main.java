@@ -23,7 +23,7 @@ public class Main extends Application {
 
             // Load the welcome view
             System.out.println("Loading WelcomeView.fxml...");
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/app/views/EmployeeDashboard.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/app/views/WelcomeView.fxml"));
             Parent root = loader.load();
             System.out.println("WelcomeView.fxml loaded successfully.");
             

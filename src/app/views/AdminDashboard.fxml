@@ -32,8 +32,8 @@
             <VBox spacing="10" alignment="CENTER" style="-fx-background-color: #3e3e3e; -fx-padding: 20; -fx-border-radius: 10; -fx-background-radius: 10;">
                 <Label text="Create Project" style="-fx-font-size: 18px; -fx-text-fill: white;"/>
                 <TextField fx:id="projectTitleField" promptText="Title"  style="-fx-background-color: #4a4a4a; -fx-text-fill: white; -fx-border-radius: 5; -fx-background-radius: 5;"/>
-                <TextArea fx:id="projectDescriptionField" promptText="Description" style="-fx-background-color: #4a4a4a; -fx-text-fill: white; -fx-border-radius: 5; -fx-background-radius: 5;"/>
-                <DatePicker fx:id="projectStartDatePicker" promptText="Start Date" style="-fx-background-color: #4a4a4a; -fx-text-fill: white; -fx-border-radius: 5; -fx-background-radius: 5;"/>
+                <TextArea fx:id="projectDescriptionField" promptText="Description" style="-fx-background-color: #4a4a4a; -fx-text-fill: black; -fx-border-radius: 5; -fx-background-radius: 5;"/>
+                <DatePicker fx:id="projectStartDatePicker" promptText="Start Date" style="-fx-background-color: #4a4a4a; -fx-text-fill: black; -fx-border-radius: 5; -fx-background-radius: 5;"/>
                 <DatePicker fx:id="projectEndDatePicker" promptText="End Date" style="-fx-background-color: #4a4a4a; -fx-text-fill: white; -fx-border-radius: 5; -fx-background-radius: 5;"/>
                 <Button text="Create" onAction="#handleCreateProject" style="-fx-background-color: #ff4d4d; -fx-text-fill: white; -fx-border-radius: 5; -fx-background-radius: 5;"/>
             </VBox>

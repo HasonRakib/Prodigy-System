@@ -50,6 +50,11 @@ public class UserManager {
         }
     }
 
+    public static boolean addProjectManager(String username, String password) {
+        UserManager userManager = new UserManager();
+        return userManager.registerUser(username, password, "Project Manager");
+    }
+
     public User authenticateUser(String username, String password) {
         try (Connection conn = DatabaseManager.connect();
              PreparedStatement stmt = conn.prepareStatement("SELECT * FROM users WHERE username = ? AND password = ?")) {

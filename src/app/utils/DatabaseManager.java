@@ -2,6 +2,7 @@ package app.utils;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+//import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 
@@ -81,8 +82,8 @@ public class DatabaseManager {
                 ");";
 
         String projectTable = "CREATE TABLE IF NOT EXISTS Projects (" +
-                "ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                "Name TEXT NOT NULL, " +
+                "projectID TEXT PRIMARY KEY, " +
+                "Title TEXT NOT NULL, " +
                 "Description TEXT, " +
                 "StartDate DATE, " +
                 "EndDate DATE" +
@@ -107,4 +108,5 @@ public class DatabaseManager {
             System.out.println(e.getMessage());
         }
     }
+
 }
