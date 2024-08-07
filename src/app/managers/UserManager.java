@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import app.models.User;
 import app.utils.DatabaseManager;
 import app.utils.IDGenerator;
+//import app.utils.NotificationService;
 
 public class UserManager {
 
@@ -80,12 +81,26 @@ public class UserManager {
             stmt.setString(1, username);
             stmt.setString(2, password);
             ResultSet rs = stmt.executeQuery();
+
             if (rs.next()) {
                 String userID = rs.getString("userID");
                 String roleStr = rs.getString("Role").toUpperCase().replace(" ", "_");  // Replace spaces with underscores
-                User.Role role = User.Role.valueOf(roleStr);  // Convert string to enum
-                User user = new User(userID, username, password, role);
-                this.currentUser = user;  // Set the current user
+                // Convert string to enum with error handling
+            User.Role role;
+            try {
+                role = User.Role.valueOf(roleStr);
+            } catch (IllegalArgumentException e) {
+                System.err.println("Invalid role value from database: " + roleStr);
+                return null;  // Or handle it accordingly
+            }
+
+            User user = new User(userID, username, password, role);
+            this.currentUser = user;  // Set the current user
+
+            // Notify if user is a project manager
+            /*if (role == User.Role.PROJECT_MANAGER) {
+                NotificationService.getInstance().notify("Project Manager " + username + " logged in.");
+            }*/
                 return user;
             } else {
                 return null;

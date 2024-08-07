@@ -51,6 +51,7 @@ public class DatabaseManager {
                 "Title TEXT NOT NULL, " +
                 "Description TEXT, " +
                 "AssignedTo TEXT, " +
+                "Status TEXT, " +
                 "FOREIGN KEY (AssignedTo) REFERENCES Users(userID) " +
                 ");";
 

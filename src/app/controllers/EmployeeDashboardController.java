@@ -1,5 +1,7 @@
 package app.controllers;
 
+import app.managers.UserManager;
+import app.models.User;
 import app.utils.DatabaseManager;
 //import app.utils.EmailSender;
 import javafx.collections.FXCollections;
@@ -26,12 +28,15 @@ public class EmployeeDashboardController {
     private TextField messageField;
 
     @FXML
-    private ListView<String> taskListView;
+    private ListView<String> assignedSubTasksListView;
 
     @FXML
-    private TextField taskIdField;
+    private TextField SubTaskIdTextField; // TextField for entering the task ID
     @FXML
-    private ComboBox<String> statusComboBox;
+    private TextField SubTaskStatusTextField; // TextField for entering the new status
+
+    /*@FXML
+    private ComboBox<String> statusComboBox;*/
 
     @FXML
     private TextField emailRecipientField;
@@ -42,8 +47,8 @@ public class EmployeeDashboardController {
 
     @FXML
     private void initialize() {
-        loadTasks();
-        statusComboBox.setItems(FXCollections.observableArrayList("Pending", "In Progress", "Completed"));
+        loadSubTasks();
+       // statusComboBox.setItems(FXCollections.observableArrayList("Pending", "In Progress", "Completed"));
     }
 
     @FXML
@@ -57,38 +62,62 @@ public class EmployeeDashboardController {
         // Add the message to the list view (for simplicity, you can extend it to store in a database)
         messageListView.getItems().add("You: " + message);
         messageField.clear();
+        }
+
+
+    @FXML
+    private void handleViewMySubTasks(ActionEvent event) {
+        loadSubTasks();
+    }
+    private void loadSubTasks() {
+         UserManager userManager = UserManager.getInstance();
+         User currentUser = userManager.getCurrentUser();
+
+         if (currentUser == null) {
+            System.out.println("No user is currently logged in.");
+            return;
+        }
+        String currentUserID = currentUser.getUserID();
+
+        ObservableList<String> tasks = FXCollections.observableArrayList();
+        String query = "SELECT * FROM Subtasks WHERE AssignedTo = ?";
+        try (Connection conn = DatabaseManager.connect();
+         PreparedStatement pstmt = conn.prepareStatement(query)) {
+        pstmt.setString(1, currentUserID);
+        try (ResultSet rs = pstmt.executeQuery()) {
+            while (rs.next()) {
+                tasks.add(rs.getString("ID") + ": " + rs.getString("Title") + " - " + rs.getString("Description"));
+            }
+        }
+    } catch (SQLException e) {
+        System.out.println(e.getMessage());
+    }
+    assignedSubTasksListView.setItems(tasks);
     }
 
     @FXML
-    private void handleUpdateTaskStatus(ActionEvent event) {
-        String taskId = taskIdField.getText();
-        String status = statusComboBox.getValue();
+    private void handleUpdateSubTaskStatus(ActionEvent event) {
+        String subtaskID = SubTaskIdTextField.getText();
+        String newStatus = SubTaskStatusTextField.getText();
 
-        if (taskId.isEmpty() || status == null) {
-            showAlert(Alert.AlertType.ERROR, "Error", "Task ID and status must be provided.");
-            return;
-        }
-
-        if (updateTaskStatusInDatabase(taskId, status)) {
-            showAlert(Alert.AlertType.INFORMATION, "Success", "Task status updated successfully.");
-            loadTasks();
+        if (subtaskID != null && !subtaskID.isEmpty() && newStatus != null && !newStatus.isEmpty()) {
+            if (updateSubTaskStatus(subtaskID, newStatus)) {
+                showAlert(Alert.AlertType.INFORMATION, "Success", "Task status updated successfully.");
+            } else {
+                showAlert(Alert.AlertType.ERROR, "Error", "Failed to update task status.");
+            }
         } else {
-            showAlert(Alert.AlertType.ERROR, "Error", "Failed to update task status.");
+            showAlert(Alert.AlertType.WARNING, "Warning", "Please enter both Task ID and new status.");
         }
     }
-
-    private boolean updateTaskStatusInDatabase(String taskId, String status) {
-        String query = "UPDATE Tasks SET Status = ? WHERE ID = ?";
-
+    private boolean updateSubTaskStatus(String subtaskID, String newStatus) {
+        String query = "UPDATE Subtasks SET Status = ? WHERE ID = ?";
         try (Connection conn = DatabaseManager.connect();
              PreparedStatement pstmt = conn.prepareStatement(query)) {
-
-            pstmt.setString(1, status);
-            pstmt.setString(2, taskId);
-
+            pstmt.setString(1, newStatus);
+            pstmt.setString(2, subtaskID);
             pstmt.executeUpdate();
             return true;
-
         } catch (SQLException e) {
             System.out.println(e.getMessage());
             return false;
@@ -128,29 +157,6 @@ public class EmployeeDashboardController {
         }
     }
 
-    private void loadTasks() {
-        ObservableList<String> tasks = FXCollections.observableArrayList();
-        String query = "SELECT * FROM Tasks WHERE AssignedTo = ?";
-
-        try (Connection conn = DatabaseManager.connect();
-             PreparedStatement pstmt = conn.prepareStatement(query)) {
-
-            // Use a placeholder for the employee ID (assuming it's stored in a variable `employeeID`)
-            String employeeID = "employee123"; // Replace this with the actual employee ID
-            pstmt.setString(1, employeeID);
-
-            try (ResultSet rs = pstmt.executeQuery()) {
-                while (rs.next()) {
-                    tasks.add(rs.getString("ID") + ": " + rs.getString("Title") + " - " + rs.getString("Status"));
-                }
-            }
-
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-
-        taskListView.setItems(tasks);
-    }
 
     private void showAlert(Alert.AlertType alertType, String title, String message) {
         Alert alert = new Alert(alertType);

@@ -31,18 +31,19 @@
         <!-- View Tasks Tab -->
         <Tab text="View Tasks" style="-fx-background-color: transparent; -fx-font-size: 14px; -fx-text-fill: white;">
             <VBox spacing="10" alignment="CENTER" style="-fx-background-color: #3e3e3e; -fx-padding: 20; -fx-border-radius: 10; -fx-background-radius: 10;">
-                <Label text="Tasks Assigned to You"  style="-fx-font-size: 18px; -fx-text-fill: white;"/>
-                <ListView fx:id="taskListView" style="-fx-padding: 10;"/>
+                <Label text="My SubTasks"  style="-fx-font-size: 18px; -fx-text-fill: white;"/>
+                <ListView fx:id="assignedSubTasksListView"  style="-fx-background-color: #4a4a4a; -fx-text-fill: white; -fx-border-radius: 5; -fx-background-radius: 5;"/>
+                <Button text="View All Tasks" onAction="#handleViewMySubTasks" style="-fx-background-color: #ff4d4d; -fx-text-fill: white; -fx-border-radius: 5; -fx-background-radius: 5; -fx-cursor: pointer; -fx-padding: 10 20;"/>
             </VBox>
         </Tab>
 
         <!-- Update Task Status Tab -->
         <Tab text="Update Task Status" style="-fx-background-color: transparent; -fx-font-size: 14px; -fx-text-fill: white;">
             <VBox spacing="10" alignment="CENTER" style="-fx-background-color: #3e3e3e; -fx-padding: 20; -fx-border-radius: 10; -fx-background-radius: 10;">
-                <Label text="Update Task Status"  style="-fx-font-size: 18px; -fx-text-fill: white;"/>
-                <TextField fx:id="taskIdField" promptText="Task ID" style="-fx-background-color: #4a4a4a; -fx-text-fill: white; -fx-border-radius: 5; -fx-background-radius: 5;"/>
-                <ComboBox fx:id="statusComboBox" promptText="Select Status" style="-fx-background-radius: 15px; -fx-padding: 10px;"/>
-                <Button text="Update Status" onAction="#handleUpdateTaskStatus" style="-fx-background-color: #ff4d4d; -fx-text-fill: white; -fx-border-radius: 5; -fx-background-radius: 5;"/>
+                <Label text="Update SubTask Status"  style="-fx-font-size: 18px; -fx-text-fill: white;"/>
+                <TextField fx:id="SubTaskIdTextField" promptText="SubTask ID" style="-fx-background-color: #4a4a4a; -fx-text-fill: white; -fx-border-radius: 5; -fx-background-radius: 5;"/>
+                <TextField fx:id="SubTaskStatusTextField" promptText="New Status" style="-fx-background-color: #4a4a4a; -fx-text-fill: white; -fx-border-radius: 5; -fx-background-radius: 5;"/>
+                <Button text="Update Status" onAction="#handleUpdateSubTaskStatus" style="-fx-background-color: #ff4d4d; -fx-text-fill: white; -fx-border-radius: 5; -fx-background-radius: 5;"/>
             </VBox>
         </Tab>
 
