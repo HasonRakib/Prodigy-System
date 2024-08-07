@@ -29,19 +29,26 @@
     <Tab text="View Employees" style="-fx-background-color: transparent; -fx-font-size: 14px; -fx-text-fill: white;">
         <VBox spacing="10" alignment="CENTER" style="-fx-background-color: #3e3e3e; -fx-padding: 20; -fx-border-radius: 10; -fx-background-radius: 10;">
             <Label text="All Employees" style="-fx-font-size: 18px; -fx-text-fill: white;"/>
-            <ListView fx:id="employeeListView" style="-fx-padding: 10;"/>
+            <ListView fx:id="employeeListView" style="-fx-padding: 10;-fx-background-color: #4a4a4a; -fx-text-fill: white; -fx-border-radius: 5; -fx-background-radius: 5;"/>
             <Button text="View All Employees" onAction="#handleViewAllEmployees" style="-fx-background-color: #ff4d4d; -fx-text-fill: white; -fx-border-radius: 5; -fx-background-radius: 5; -fx-cursor: pointer; -fx-padding: 10 20;"/>
         </VBox>
     </Tab>
 
+    <!-- Tab for creating subtasks -->
+    <Tab text="Create SubTask" style="-fx-background-color: transparent; -fx-font-size: 14px; -fx-text-fill: white;">
+        <VBox spacing="10" alignment="CENTER" style="-fx-background-color: #3e3e3e; -fx-padding: 20; -fx-border-radius: 10; -fx-background-radius: 10;">
+            <Label text="Create SubTask" style="-fx-font-size: 18px; -fx-text-fill: white;"/>
+            <TextField fx:id="SubTaskTitleField" promptText="Title" style="-fx-background-color: #4a4a4a; -fx-text-fill: white; -fx-border-radius: 5; -fx-background-radius: 5;"/>
+            <TextArea fx:id="SubTaskDescriptionField" promptText="Description" style="-fx-background-color: #4a4a4a; -fx-text-fill: black; -fx-border-radius: 5; -fx-background-radius: 5;"/>
+            <Button text="Create" onAction="#handleCreateSubTask" style="-fx-background-color: #ff4d4d; -fx-text-fill: white; -fx-border-radius: 5; -fx-background-radius: 5;"/>
+        </VBox>
+    </Tab>
     <!-- Tab for breaking down tasks and assigning subtasks -->
     <Tab text="Assign Subtasks" style="-fx-background-color: transparent; -fx-font-size: 14px; -fx-text-fill: white;">
         <VBox spacing="10" alignment="CENTER" style="-fx-background-color: #3e3e3e; -fx-padding: 20; -fx-border-radius: 10; -fx-background-radius: 10;">
             <Label text="Assign Subtasks" style="-fx-font-size: 18px; -fx-text-fill: white;"/>
-            <TextField fx:id="taskIdField" promptText="Task ID" style="-fx-background-color: #4a4a4a; -fx-text-fill: white; -fx-border-radius: 5; -fx-background-radius: 5;"/>
+            <TextField fx:id="subtaskIdField" promptText="SubTask ID" style="-fx-background-color: #4a4a4a; -fx-text-fill: white; -fx-border-radius: 5; -fx-background-radius: 5;"/>
             <TextField fx:id="employeeIdField" promptText="Employee ID" style="-fx-background-color: #4a4a4a; -fx-text-fill: white; -fx-border-radius: 5; -fx-background-radius: 5;"/>
-            <TextField fx:id="subtaskTitleField" promptText="Subtask Title" style="-fx-background-color: #4a4a4a; -fx-text-fill: white; -fx-border-radius: 5; -fx-background-radius: 5;"/>
-            <TextArea fx:id="subtaskDescriptionField" promptText="Subtask Description" style="-fx-background-color: #4a4a4a; -fx-text-fill: white; -fx-border-radius: 5; -fx-background-radius: 5;"/>
             <Button text="Assign" onAction="#handleAssignSubtask" style="-fx-background-color: #ff4d4d; -fx-text-fill: white; -fx-border-radius: 5; -fx-background-radius: 5; -fx-cursor: pointer; -fx-padding: 10 20;"/>
         </VBox>
     </Tab>
@@ -50,7 +57,7 @@
     <Tab text="View Tasks" style="-fx-background-color: transparent; -fx-font-size: 14px; -fx-text-fill: white;">
         <VBox spacing="10" alignment="CENTER" style="-fx-background-color: #3e3e3e; -fx-padding: 20; -fx-border-radius: 10; -fx-background-radius: 10;">
             <Label text="All Tasks"  style="-fx-font-size: 18px; -fx-text-fill: white;"/>
-            <ListView fx:id="taskListView"  style="-fx-padding: 10;"/>
+            <ListView fx:id="assignedTasksListView"  style="-fx-background-color: #4a4a4a; -fx-text-fill: white; -fx-border-radius: 5; -fx-background-radius: 5;"/>
             <Button text="View All Tasks" onAction="#handleViewAllTasks" style="-fx-background-color: #ff4d4d; -fx-text-fill: white; -fx-border-radius: 5; -fx-background-radius: 5; -fx-cursor: pointer; -fx-padding: 10 20;"/>
         </VBox>
     </Tab>
@@ -69,8 +76,8 @@
     <Tab text="Update Task Status" style="-fx-background-color: transparent; -fx-font-size: 14px; -fx-text-fill: white;">
         <VBox spacing="10" alignment="CENTER" style="-fx-background-color: #3e3e3e; -fx-padding: 20; -fx-border-radius: 10; -fx-background-radius: 10;">
             <Label text="Update Task Status"  style="-fx-font-size: 18px; -fx-text-fill: white;"/>
-            <TextField fx:id="updateTaskIdField" promptText="Task ID" style="-fx-background-color: #4a4a4a; -fx-text-fill: white; -fx-border-radius: 5; -fx-background-radius: 5;"/>
-            <TextField fx:id="taskStatusField" promptText="New Status" style="-fx-background-color: #4a4a4a; -fx-text-fill: white; -fx-border-radius: 5; -fx-background-radius: 5;"/>
+            <TextField fx:id="taskIDTextField" promptText="Task ID" style="-fx-background-color: #4a4a4a; -fx-text-fill: white; -fx-border-radius: 5; -fx-background-radius: 5;"/>
+            <TextField fx:id="taskStatusTextField" promptText="New Status" style="-fx-background-color: #4a4a4a; -fx-text-fill: white; -fx-border-radius: 5; -fx-background-radius: 5;"/>
             <Button text="Update" onAction="#handleUpdateTaskStatus" style="-fx-background-color: #ff4d4d; -fx-text-fill: white; -fx-border-radius: 5; -fx-background-radius: 5; -fx-cursor: pointer; -fx-padding: 10 20;"/>
         </VBox>
     </Tab>
@@ -85,11 +92,12 @@
     </Tab>
 
     <!-- Tab for deleting a task -->
-    <Tab text="Delete Task" style="-fx-background-color: transparent; -fx-font-size: 14px; -fx-text-fill: white;">
+    <Tab text="View SubTasks" style="-fx-background-color: transparent; -fx-font-size: 14px; -fx-text-fill: white;">
         <VBox spacing="10" alignment="CENTER" style="-fx-background-color: #3e3e3e; -fx-padding: 20; -fx-border-radius: 10; -fx-background-radius: 10;">
-            <Label text="Delete Task"  style="-fx-font-size: 18px; -fx-text-fill: white;"/>
-            <TextField fx:id="deleteTaskIdField" promptText="Task ID" style="-fx-background-color: #4a4a4a; -fx-text-fill: white; -fx-border-radius: 5; -fx-background-radius: 5;"/>
-            <Button text="Delete" onAction="#handleDeleteTask" style="-fx-background-color: #ff4d4d; -fx-text-fill: white; -fx-border-radius: 5; -fx-background-radius: 5; -fx-cursor: pointer; -fx-padding: 10 20;"/>
+            <Label text="SubTasks" style="-fx-font-size: 18px; -fx-text-fill: white;"/>
+            <ListView fx:id="subtasksListView" style="-fx-background-color: #4a4a4a; -fx-text-fill: white; -fx-border-radius: 5; -fx-background-radius: 5;"/>
+            <Button text="View SubTasks" onAction="#handleViewSubTasks" style="-fx-background-color: #ff4d4d; -fx-text-fill: white; -fx-border-radius: 5; -fx-background-radius: 5;"/>
+            <Button text="Delete SubTask" onAction="#handleDeleteSubTask" style="-fx-background-color: #ff4d4d; -fx-text-fill: white; -fx-border-radius: 5; -fx-background-radius: 5;"/>
         </VBox>
     </Tab>
 

@@ -11,6 +11,20 @@ import app.utils.IDGenerator;
 
 public class UserManager {
 
+    private static UserManager instance;
+    private User currentUser;
+
+    private UserManager() {
+        // Private constructor to prevent instantiation
+    }
+
+    public static UserManager getInstance() {
+        if (instance == null) {
+            instance = new UserManager();
+        }
+        return instance;
+    }
+
     private String generateUniqueUserID(String role) {
         String userID;
         boolean isUnique;
@@ -55,6 +69,11 @@ public class UserManager {
         return userManager.registerUser(username, password, "Project Manager");
     }
 
+    public static boolean AddEmployee(String username, String password) {
+        UserManager userManager = new UserManager();
+        return userManager.registerUser(username, password, "Employee");
+    }
+
     public User authenticateUser(String username, String password) {
         try (Connection conn = DatabaseManager.connect();
              PreparedStatement stmt = conn.prepareStatement("SELECT * FROM users WHERE username = ? AND password = ?")) {
@@ -65,7 +84,9 @@ public class UserManager {
                 String userID = rs.getString("userID");
                 String roleStr = rs.getString("Role").toUpperCase().replace(" ", "_");  // Replace spaces with underscores
                 User.Role role = User.Role.valueOf(roleStr);  // Convert string to enum
-                return new User(userID, username, password, role);
+                User user = new User(userID, username, password, role);
+                this.currentUser = user;  // Set the current user
+                return user;
             } else {
                 return null;
             }
@@ -73,6 +94,10 @@ public class UserManager {
             e.printStackTrace();
             return null;
         }
+    }
+
+    public User getCurrentUser() {
+        return currentUser;
     }
 
     public boolean deleteUser(String username) {

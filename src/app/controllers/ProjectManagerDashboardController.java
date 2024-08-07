@@ -1,5 +1,11 @@
 package app.controllers;
 
+import app.utils.IDGenerator;
+
+import javafx.scene.control.Alert.AlertType;
+
+import app.managers.UserManager;
+import app.models.User;
 import app.utils.DatabaseManager;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -24,55 +30,74 @@ import java.sql.SQLException;
 public class ProjectManagerDashboardController {
 
     @FXML
-    private TextField employeeNameField;
+    private TextField employeeUsernameField;
     @FXML
-    private TextField employeeIDField;
+    private TextField employeePasswordField;
+    @FXML
+    private TextField employeeIdField;
     @FXML
     private ListView<String> employeeListView;
+    /*@FXML
+    private TextField subtaskTitleField;
     @FXML
-    private TextField taskIDField;
+    private TextArea subtaskDescriptionField;*/
     @FXML
-    private TextArea subtaskDescriptionField;
+    private TextField SubTaskTitleField;
+    @FXML
+    private TextArea SubTaskDescriptionField;
+
+    @FXML
+    private TextField subtaskIdField;
     @FXML
     private TextField subtaskEmployeeIDField;
+
+    @FXML
+    private TextField taskIDTextField; // TextField for entering the task ID
+    @FXML
+    private TextField taskStatusTextField; // TextField for entering the new status
+
     @FXML
     private ListView<String> assignedTasksListView;
     @FXML
     private ListView<String> taskListView;
+
     @FXML
+    private ListView<String> subtasksListView;
+    /*@FXML
     private ComboBox<String> taskStatusComboBox;
     @FXML
-    private ListView<String> tasksForStatusUpdateListView;
+    private ListView<String> tasksForStatusUpdateListView;*/
     @FXML
-    private TextField deleteEmployeeIDField;
+    private TextField deleteEmployeeUsernameField;
     @FXML
     private TextField deleteTaskIDField;
 
     @FXML
-    private void handleAddEmployee(ActionEvent event) {
-        String name = employeeNameField.getText();
-        String id = employeeIDField.getText();
-        if (addEmployeeToDatabase(name, id)) {
-            showAlert(Alert.AlertType.INFORMATION, "Success", "Employee added successfully.");
-            loadEmployees();
+    private void handleAddEmployee() {
+        String username = employeeUsernameField.getText();
+        String password = employeePasswordField.getText();
+
+        
+         if (username.isEmpty() || password.isEmpty()) {
+            showAlert("Error", "Username or password cannot be empty.");
+            return;
+        }
+        
+        boolean success = UserManager.AddEmployee(username, password);
+        if (success) {
+            showAlert("Success", "Employee added successfully.");
         } else {
-            showAlert(Alert.AlertType.ERROR, "Error", "Failed to add employee.");
+            showAlert("Error", "Failed to add Employee.");
         }
     }
 
-    private boolean addEmployeeToDatabase(String name, String id) {
-        String query = "INSERT INTO Employees (ID, Name) VALUES (?, ?)";
-        try (Connection conn = DatabaseManager.connect();
-             PreparedStatement pstmt = conn.prepareStatement(query)) {
-            pstmt.setString(1, id);
-            pstmt.setString(2, name);
-            pstmt.executeUpdate();
-            return true;
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-            return false;
-        }
+    private void showAlert(String title, String message) {
+        Alert alert = new Alert(AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
+
 
     @FXML
     private void handleViewAllEmployees(ActionEvent event) {
@@ -81,12 +106,12 @@ public class ProjectManagerDashboardController {
 
     private void loadEmployees() {
         ObservableList<String> employees = FXCollections.observableArrayList();
-        String query = "SELECT * FROM Employees";
+        String query = "SELECT * FROM Users WHERE Role = 'EMPLOYEE'";
         try (Connection conn = DatabaseManager.connect();
              PreparedStatement pstmt = conn.prepareStatement(query);
              ResultSet rs = pstmt.executeQuery()) {
             while (rs.next()) {
-                employees.add(rs.getString("ID") + ": " + rs.getString("Name"));
+                employees.add(rs.getString("userID") + ": " + rs.getString("Username"));
             }
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -94,27 +119,111 @@ public class ProjectManagerDashboardController {
         employeeListView.setItems(employees);
     }
 
-    @FXML
-    private void handleAssignSubtask(ActionEvent event) {
-        String taskID = taskIDField.getText();
-        String subtaskDescription = subtaskDescriptionField.getText();
-        String employeeID = subtaskEmployeeIDField.getText();
-        if (assignSubtaskToEmployee(taskID, subtaskDescription, employeeID)) {
-            showAlert(Alert.AlertType.INFORMATION, "Success", "Subtask assigned successfully.");
+    /*@FXML
+    private void handleCreateSubtask(ActionEvent event) {
+        String title = subtaskTitleField.getText();
+        String description = subtaskDescriptionField.getText();
+
+        if (title.isEmpty() || description.isEmpty()) {
+            showAlert(Alert.AlertType.ERROR, "Error", "Title or Description cannot be empty.");
+            System.out.println("Title: " + subtaskTitleField.getText());
+            System.out.println("Description: " + subtaskDescriptionField.getText());
+            return;
+
+        }
+        // Generate the subtask ID using your ID generator class
+        String subtaskID = IDGenerator.generateSubTaskID();
+
+        if (addSubtaskToDatabase(subtaskID, title, description)) {
+            showAlert(Alert.AlertType.INFORMATION, "Success", "Subtask created successfully.");
+            subtaskTitleField.clear();  // Clear the input fields after successful creation
+            subtaskDescriptionField.clear();
         } else {
-            showAlert(Alert.AlertType.ERROR, "Error", "Failed to assign subtask.");
+            showAlert(Alert.AlertType.ERROR, "Error", "Failed to create subtask.");
         }
     }
 
-    private boolean assignSubtaskToEmployee(String taskID, String subtaskDescription, String employeeID) {
-        String query = "INSERT INTO Subtasks (TaskID, Description, EmployeeID) VALUES (?, ?, ?)";
+    private boolean addSubtaskToDatabase(String subtaskID,String title, String description) { 
+        String query = "INSERT INTO Subtasks (ID, Title, Description) VALUES (?, ?, ?)";
         try (Connection conn = DatabaseManager.connect();
              PreparedStatement pstmt = conn.prepareStatement(query)) {
-            pstmt.setString(1, taskID);
-            pstmt.setString(2, subtaskDescription);
-            pstmt.setString(3, employeeID);
+            pstmt.setString(1, subtaskID);
+            pstmt.setString(2, title);
+            pstmt.setString(3, description);
             pstmt.executeUpdate();
             return true;
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            return false;
+        }
+    }
+        */
+
+        @FXML
+        private void handleCreateSubTask(ActionEvent event) {
+            //String taskID = IDGenerator.generateTaskID();
+            String subtaskID = IDGenerator.generateSubTaskID();
+            String title = SubTaskTitleField.getText();
+            String description = SubTaskDescriptionField.getText();
+
+            if (title.isEmpty() || description.isEmpty()) {
+                showAlert(Alert.AlertType.ERROR, "Error", "Title or Description cannot be empty.");
+                System.out.println("Title: " + SubTaskTitleField.getText());
+                System.out.println("Description: " + SubTaskDescriptionField.getText());
+                return;
+    
+            }
+    
+            if (addSubTaskToDatabase(subtaskID, title, description)) {
+                showAlert(AlertType.INFORMATION, "Success", "SubTask created successfully.");
+                loadTasks();
+            } else {
+                showAlert(AlertType.ERROR, "Error", "Failed to create task.");
+            }
+        }
+        private boolean addSubTaskToDatabase(String subtaskID, String title, String description) {
+            String query = "INSERT INTO Subtasks (ID, Title, Description) VALUES (?, ?, ?)";
+    
+            try (Connection conn = DatabaseManager.connect();
+                 PreparedStatement pstmt = conn.prepareStatement(query)) {
+    
+                pstmt.setString(1, subtaskID);
+                pstmt.setString(2, title);
+                pstmt.setString(3, description);
+                //pstmt.setString(4, "Pending");
+    
+                pstmt.executeUpdate();
+                return true;
+    
+            } catch (SQLException e) {
+                System.out.println(e.getMessage());
+                return false;
+            }
+        }
+
+    @FXML
+    private void handleAssignSubtask(ActionEvent event) {
+        String subtaskID = subtaskIdField.getText();
+        String empID = employeeIdField.getText();
+
+        if (assignSubtaskToEmployee(subtaskID, empID)) {
+            showAlert(AlertType.INFORMATION, "Success", "Task assigned successfully.");
+        } else {
+            showAlert(AlertType.ERROR, "Error", "Failed to assign task.");
+        }
+    }
+    private boolean assignSubtaskToEmployee(String subtaskID, String empID) {
+        String query = "UPDATE Subtasks SET AssignedTo = ? WHERE ID = ?";
+
+        try (Connection conn = DatabaseManager.connect();
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+
+            pstmt.setString(1, empID);
+            pstmt.setString(2, subtaskID);
+
+            pstmt.executeUpdate();
+            return true;
+
         } catch (SQLException e) {
             System.out.println(e.getMessage());
             return false;
@@ -125,22 +234,30 @@ public class ProjectManagerDashboardController {
     private void handleViewAllTasks(ActionEvent event) {
         loadTasks();
     }
-
     private void loadTasks() {
-        ObservableList<String> tasks = FXCollections.observableArrayList();
-        String query = "SELECT * FROM Tasks WHERE ManagerID = ?";
-        try (Connection conn = DatabaseManager.connect();
-             PreparedStatement pstmt = conn.prepareStatement(query)) {
-            pstmt.setString(1, "PROJECT_MANAGER_ID"); // Replace with actual project manager ID
-            try (ResultSet rs = pstmt.executeQuery()) {
-                while (rs.next()) {
-                    tasks.add(rs.getString("ID") + ": " + rs.getString("Description"));
-                }
-            }
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
+         UserManager userManager = UserManager.getInstance();
+         User currentUser = userManager.getCurrentUser();
+
+         if (currentUser == null) {
+            System.out.println("No user is currently logged in.");
+            return;
         }
-        assignedTasksListView.setItems(tasks);
+        String currentUserID = currentUser.getUserID();
+
+        ObservableList<String> tasks = FXCollections.observableArrayList();
+        String query = "SELECT * FROM Tasks WHERE AssignedTo = ?";
+        try (Connection conn = DatabaseManager.connect();
+         PreparedStatement pstmt = conn.prepareStatement(query)) {
+        pstmt.setString(1, currentUserID);
+        try (ResultSet rs = pstmt.executeQuery()) {
+            while (rs.next()) {
+                tasks.add(rs.getString("ID") + ": " + rs.getString("Title") + " - " + rs.getString("Description"));
+            }
+        }
+    } catch (SQLException e) {
+        System.out.println(e.getMessage());
+    }
+    assignedTasksListView.setItems(tasks);
     }
 
     @FXML
@@ -183,15 +300,19 @@ public class ProjectManagerDashboardController {
 
     @FXML
     private void handleUpdateTaskStatus(ActionEvent event) {
-        String taskID = tasksForStatusUpdateListView.getSelectionModel().getSelectedItem();
-        String newStatus = taskStatusComboBox.getSelectionModel().getSelectedItem();
-        if (updateTaskStatus(taskID, newStatus)) {
-            showAlert(Alert.AlertType.INFORMATION, "Success", "Task status updated successfully.");
+        String taskID = taskIDTextField.getText();
+        String newStatus = taskStatusTextField.getText();
+
+        if (taskID != null && !taskID.isEmpty() && newStatus != null && !newStatus.isEmpty()) {
+            if (updateTaskStatus(taskID, newStatus)) {
+                showAlert(Alert.AlertType.INFORMATION, "Success", "Task status updated successfully.");
+            } else {
+                showAlert(Alert.AlertType.ERROR, "Error", "Failed to update task status.");
+            }
         } else {
-            showAlert(Alert.AlertType.ERROR, "Error", "Failed to update task status.");
+            showAlert(Alert.AlertType.WARNING, "Warning", "Please enter both Task ID and new status.");
         }
     }
-
     private boolean updateTaskStatus(String taskID, String newStatus) {
         String query = "UPDATE Tasks SET Status = ? WHERE ID = ?";
         try (Connection conn = DatabaseManager.connect();
@@ -208,8 +329,9 @@ public class ProjectManagerDashboardController {
 
     @FXML
     private void handleDeleteEmployee(ActionEvent event) {
-        String employeeID = deleteEmployeeIDField.getText();
-        if (deleteEmployee(employeeID)) {
+        //String employeeID = deleteEmployeeIDField.getText();
+        String EmployeeUsername = deleteEmployeeUsernameField.getText();
+        if (deleteEmployee(EmployeeUsername)) {
             showAlert(Alert.AlertType.INFORMATION, "Success", "Employee deleted successfully.");
             loadEmployees();
         } else {
@@ -217,11 +339,11 @@ public class ProjectManagerDashboardController {
         }
     }
 
-    private boolean deleteEmployee(String employeeID) {
-        String query = "DELETE FROM Employees WHERE ID = ?";
+    private boolean deleteEmployee(String EmployeeUsername) {
+        String query = "DELETE FROM Users WHERE Username = ?";
         try (Connection conn = DatabaseManager.connect();
              PreparedStatement pstmt = conn.prepareStatement(query)) {
-            pstmt.setString(1, employeeID);
+            pstmt.setString(1,EmployeeUsername);
             pstmt.executeUpdate();
             return true;
         } catch (SQLException e) {
@@ -231,21 +353,47 @@ public class ProjectManagerDashboardController {
     }
 
     @FXML
-    private void handleDeleteTask(ActionEvent event) {
-        String taskID = deleteTaskIDField.getText();
-        if (deleteTask(taskID)) {
-            showAlert(Alert.AlertType.INFORMATION, "Success", "Task deleted successfully.");
-            loadTasks();
-        } else {
-            showAlert(Alert.AlertType.ERROR, "Error", "Failed to delete task.");
-        }
+    private void handleViewSubTasks(ActionEvent event) {
+        loadSubtasks();
     }
-
-    private boolean deleteTask(String taskID) {
-        String query = "DELETE FROM Tasks WHERE ID = ?";
+    private void loadSubtasks() {
+        ObservableList<String> subtasks = FXCollections.observableArrayList();
+        String query = "SELECT * FROM Subtasks ";
         try (Connection conn = DatabaseManager.connect();
              PreparedStatement pstmt = conn.prepareStatement(query)) {
-            pstmt.setString(1, taskID);
+           // pstmt.setString(1, currentUserID);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    subtasks.add(rs.getString("ID") + ": " + rs.getString("Title") + " - " + rs.getString("Description"));
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        subtasksListView.setItems(subtasks);
+    }
+
+    @FXML
+    private void handleDeleteSubTask(ActionEvent event) {
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("Delete Subtask");
+        dialog.setHeaderText("Enter Subtask ID");
+        dialog.setContentText("Subtask ID:");
+
+        dialog.showAndWait().ifPresent(subtaskID -> {
+            if (deleteSubTask(subtaskID)) {
+                showAlert(AlertType.INFORMATION, "Success", "Subtask deleted successfully.");
+                loadSubtasks();
+            } else {
+                showAlert(AlertType.ERROR, "Error", "Failed to delete subtask.");
+            }
+        });
+    }
+    private boolean deleteSubTask(String subtaskID) {
+        String query = "DELETE FROM Subtasks WHERE ID = ?";
+        try (Connection conn = DatabaseManager.connect();
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setString(1, subtaskID);
             pstmt.executeUpdate();
             return true;
         } catch (SQLException e) {

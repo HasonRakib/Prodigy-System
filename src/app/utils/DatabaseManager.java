@@ -38,20 +38,20 @@ public class DatabaseManager {
                 "DueDate DATE, " +
                 "Priority TEXT, " +
                 "Status TEXT, " +
-                "CreatedBy INTEGER, " +
-                "AssignedTo INTEGER, " +
-                "ProjectID INTEGER, " +
-                "FOREIGN KEY (CreatedBy) REFERENCES Users(ID), " +
-                "FOREIGN KEY (AssignedTo) REFERENCES Users(ID), " +
-                "FOREIGN KEY (ProjectID) REFERENCES Projects(ID)" +
+                "CreatedBy TEXT, " +
+                "AssignedTo TEXT, " +
+                "ProjectID TEXT, " +
+                "FOREIGN KEY (CreatedBy) REFERENCES Users(userID), " +
+                "FOREIGN KEY (AssignedTo) REFERENCES Users(userID), " +
+                "FOREIGN KEY (ProjectID) REFERENCES Projects(projectID)" +
                 ");";
 
         String subtaskTable = "CREATE TABLE IF NOT EXISTS Subtasks (" +
                 "ID TEXT PRIMARY KEY, " +
                 "Title TEXT NOT NULL, " +
                 "Description TEXT, " +
-                "TaskID TEXT, " +
-                "FOREIGN KEY (TaskID) REFERENCES Tasks(ID)" +
+                "AssignedTo TEXT, " +
+                "FOREIGN KEY (AssignedTo) REFERENCES Users(userID) " +
                 ");";
 
         String messageTable = "CREATE TABLE IF NOT EXISTS Messages (" +

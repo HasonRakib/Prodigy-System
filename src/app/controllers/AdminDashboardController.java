@@ -57,7 +57,7 @@ public class AdminDashboardController {
     @FXML
     private TextField deletePMUsernameField;
 
-    private UserManager userManager = new UserManager();
+    private UserManager userManager = UserManager.getInstance();
 
     @FXML
     private void initialize() {
@@ -112,7 +112,6 @@ public class AdminDashboardController {
             return;
         }
         
-
         boolean success = UserManager.addProjectManager(username, password);
         if (success) {
             showAlert("Success", "Project Manager added successfully.");
@@ -133,7 +132,26 @@ public class AdminDashboardController {
     private void handleViewAllUsers(ActionEvent event) {
         loadUsers();
     }
+    private void loadUsers() {
+        ObservableList<String> users = FXCollections.observableArrayList();
+        String query = "SELECT * FROM Users";
 
+        try (Connection conn = DatabaseManager.connect();
+             PreparedStatement pstmt = conn.prepareStatement(query);
+             ResultSet rs = pstmt.executeQuery()) {
+
+            while (rs.next()) {
+                users.add(rs.getString("userID") + ": " + rs.getString("Username") + " (" + rs.getString("Role") + ")");
+            }
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+
+        userListView.setItems(users);
+    }
+
+    
     @FXML
     private void handleCreateTask(ActionEvent event) {
         String taskID = IDGenerator.generateTaskID();
@@ -147,10 +165,47 @@ public class AdminDashboardController {
             showAlert(AlertType.ERROR, "Error", "Failed to create task.");
         }
     }
+    private boolean addTaskToDatabase(String taskID, String title, String description) {
+        String query = "INSERT INTO Tasks (ID, Title, Description, Status) VALUES (?, ?, ?, ?)";
+
+        try (Connection conn = DatabaseManager.connect();
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+
+            pstmt.setString(1, taskID);
+            pstmt.setString(2, title);
+            pstmt.setString(3, description);
+            pstmt.setString(4, "Pending");
+
+            pstmt.executeUpdate();
+            return true;
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            return false;
+        }
+    }
 
     @FXML
     private void handleViewAllTasks(ActionEvent event) {
         loadTasks();
+    }
+    private void loadTasks() {
+        ObservableList<String> tasks = FXCollections.observableArrayList();
+        String query = "SELECT * FROM Tasks";
+
+        try (Connection conn = DatabaseManager.connect();
+             PreparedStatement pstmt = conn.prepareStatement(query);
+             ResultSet rs = pstmt.executeQuery()) {
+
+            while (rs.next()) {
+                tasks.add(rs.getString("ID") + ": " + rs.getString("Title") + " - " + rs.getString("Status"));
+            }
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+
+        taskListView.setItems(tasks);
     }
 
     @FXML
@@ -162,6 +217,23 @@ public class AdminDashboardController {
             showAlert(AlertType.INFORMATION, "Success", "Task assigned successfully.");
         } else {
             showAlert(AlertType.ERROR, "Error", "Failed to assign task.");
+        }
+    }
+    private boolean assignTaskToProjectManager(String taskID, String pmID) {
+        String query = "UPDATE Tasks SET AssignedTo = ? WHERE ID = ?";
+
+        try (Connection conn = DatabaseManager.connect();
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+
+            pstmt.setString(1, pmID);
+            pstmt.setString(2, taskID);
+
+            pstmt.executeUpdate();
+            return true;
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            return false;
         }
     }
 
@@ -206,9 +278,6 @@ public class AdminDashboardController {
             }
         });
     }
-
-
-
     private boolean deleteTaskFromDatabase(String taskID) {
         String query = "DELETE FROM Tasks WHERE ID = ?";
 
@@ -239,84 +308,6 @@ public class AdminDashboardController {
             showAlert(Alert.AlertType.ERROR, "Error", "Failed to load the login screen.");
         }
     }
-
-    private void loadUsers() {
-        ObservableList<String> users = FXCollections.observableArrayList();
-        String query = "SELECT * FROM Users";
-
-        try (Connection conn = DatabaseManager.connect();
-             PreparedStatement pstmt = conn.prepareStatement(query);
-             ResultSet rs = pstmt.executeQuery()) {
-
-            while (rs.next()) {
-                users.add(rs.getString("userID") + ": " + rs.getString("Username") + " (" + rs.getString("Role") + ")");
-            }
-
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-
-        userListView.setItems(users);
-    }
-
-    private void loadTasks() {
-        ObservableList<String> tasks = FXCollections.observableArrayList();
-        String query = "SELECT * FROM Tasks";
-
-        try (Connection conn = DatabaseManager.connect();
-             PreparedStatement pstmt = conn.prepareStatement(query);
-             ResultSet rs = pstmt.executeQuery()) {
-
-            while (rs.next()) {
-                tasks.add(rs.getString("ID") + ": " + rs.getString("Title") + " - " + rs.getString("Status"));
-            }
-
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-
-        taskListView.setItems(tasks);
-    }
-
-    private boolean addTaskToDatabase(String taskID, String title, String description) {
-        String query = "INSERT INTO Tasks (ID, Title, Description, Status) VALUES (?, ?, ?, ?)";
-
-        try (Connection conn = DatabaseManager.connect();
-             PreparedStatement pstmt = conn.prepareStatement(query)) {
-
-            pstmt.setString(1, taskID);
-            pstmt.setString(2, title);
-            pstmt.setString(3, description);
-            pstmt.setString(4, "Pending");
-
-            pstmt.executeUpdate();
-            return true;
-
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-            return false;
-        }
-    }
-
-    private boolean assignTaskToProjectManager(String taskID, String pmID) {
-        String query = "UPDATE Tasks SET AssignedTo = ? WHERE ID = ?";
-
-        try (Connection conn = DatabaseManager.connect();
-             PreparedStatement pstmt = conn.prepareStatement(query)) {
-
-            pstmt.setString(1, pmID);
-            pstmt.setString(2, taskID);
-
-            pstmt.executeUpdate();
-            return true;
-
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-            return false;
-        }
-    }
-
-   
 
     private void showAlert(AlertType alertType, String title, String message) {
         Alert alert = new Alert(alertType);

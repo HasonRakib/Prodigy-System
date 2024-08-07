@@ -44,7 +44,7 @@ public class LoginController {
     @FXML
     private Button backButton;
 
-    private UserManager userManager = new UserManager();
+    private UserManager userManager = UserManager.getInstance();
 
     
 
