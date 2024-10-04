@@ -39,11 +39,11 @@ public class EmployeeDashboardController {
     private ComboBox<String> statusComboBox;*/
 
     @FXML
-    private TextField emailRecipientField;
+    private TextField toEmailField;
     @FXML
-    private TextField emailSubjectField;
+    private TextField subjectField;
     @FXML
-    private TextArea emailBodyField;
+    private TextArea messageArea;
 
     @FXML
     private void initialize() {
@@ -142,6 +142,22 @@ public class EmployeeDashboardController {
             showAlert(Alert.AlertType.ERROR, "Error", "Failed to send email.");
         }
     }*/
+
+    @FXML
+    private void sendEmail() {
+    String toEmail = toEmailField.getText();
+    String subject = subjectField.getText();
+    String message = messageArea.getText();
+
+    EmailController emailController = new EmailController();
+    boolean success = emailController.sendEmail(toEmail, subject, message);
+
+    if (success) {
+        System.out.println("Email sent successfully");
+    } else {
+        System.out.println("Failed to send email");
+    }
+        }   
 
     @FXML
     private void handleLogout(ActionEvent event) {
